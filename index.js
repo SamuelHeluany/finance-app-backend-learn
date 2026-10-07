@@ -4,11 +4,18 @@ import { PostgresHelper } from './src/db/postgres/helper.js'
 
 const app = express()
 
+app.use(express.json())
+
 app.get('/', async (req, res) => {
     // passa o helper e o select que você quer
     const results = await PostgresHelper.query('SELECT * FROM users')
     // resposta vem o select em JSON
     res.send(JSON.stringify(results))
+})
+
+app.post('/api/users', (req, res) => {
+    console.log(req.body)
+    res.status(201).send('User created')
 })
 
 app.listen(3000, () => {
