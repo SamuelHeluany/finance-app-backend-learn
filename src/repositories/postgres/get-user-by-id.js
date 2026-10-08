@@ -1,4 +1,4 @@
-import { PostgresHelper } from '../../db/postgres/helper'
+import { PostgresHelper } from '../../db/postgres/helper.js'
 
 export class PostgresGetUserByIdRepository {
     // chama o helper para fazer o select por id dos usuários passando o userId
