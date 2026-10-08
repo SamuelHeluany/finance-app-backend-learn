@@ -1,6 +1,7 @@
 import 'dotenv/config'
 import express from 'express'
 import { PostgresHelper } from './src/db/postgres/helper.js'
+import { CreateUserController } from './src/controllers/create-user.js'
 
 const app = express()
 
@@ -13,11 +14,15 @@ app.get('/', async (req, res) => {
     res.send(JSON.stringify(results))
 })
 
-app.post('/api/users', (req, res) => {
-    console.log(req.body)
-    res.status(201).send('User created')
+app.post('/api/users', async (req, res) => {
+    // pego o controller que valida a requisição (campos obrigatórios, tamanho de senha e email)
+    const createUserController = new CreateUserController()
+    // executo ele com o req, porque é um httpRequest e uso o desestruturo passando o statusCode e body de resposta
+    const { statusCode, body } = await createUserController.execute(req)
+    // Passo a resposta com o status code e o body.
+    res.status(statusCode).send(body)
 })
 
-app.listen(3000, () => {
-    console.log('Listen on 3000 port!')
+app.listen(process.env.PORT, () => {
+    console.log(`Listen on port ${process.env.PORT}`)
 })
