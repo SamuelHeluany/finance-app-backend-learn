@@ -1,6 +1,7 @@
 import { CreateUserUseCase } from '../use-cases/create-user.js'
 import validator from 'validator'
 import { badRequest, created, serverError } from './helpers.js'
+import { EmailAlreadyInUseError } from '../errors/user.js'
 
 export class CreateUserController {
     async execute(httpRequest) {
@@ -46,6 +47,10 @@ export class CreateUserController {
             // retornar a resposta pro usuário (status code) e no corpo o usuário criado
             return created(createdUser)
         } catch (error) {
+            // faz a comparação de que se o erro for uma instancia de EmailAlreadyInUseError, significa que esse erro foi emitido em alguma camada (no caso na use-case) e passa um badRequest com a mensagem do EmailAlreadyInUseError
+            if (error instanceof EmailAlreadyInUseError) {
+                return badRequest({ message: error.message })
+            }
             console.error('Erro ao processar requisição:', error)
             // se der erro, retorna o status code e message ao usuário (vindo do helpers.js)
             return serverError()
