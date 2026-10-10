@@ -1,4 +1,4 @@
-import { PostgresHelper } from '../../db/postgres/helper'
+import { PostgresHelper } from '../../db/postgres/helper.js'
 
 export class PostgresUpdateUserRepository {
     // passa o id do usuário, e atualiza os parametros necessários (email, first_name, last_name, password)
