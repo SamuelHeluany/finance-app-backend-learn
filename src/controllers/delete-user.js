@@ -4,13 +4,14 @@ import {
     invalidIdResponse,
     ok,
     serverError,
+    userNotFoundResponse,
 } from './helpers/index.js'
 
 export class DeleteUserController {
     async execute(httpRequest) {
         try {
             // aqui é o params da URL
-            const userId = httpRequest.body.userId
+            const userId = httpRequest.params.userId
 
             const idIsValid = checkIfIdIsValid(userId)
 
@@ -20,7 +21,12 @@ export class DeleteUserController {
 
             const deleteUserUseCase = new DeleteUserUseCase()
 
-            const deletedUser = deleteUserUseCase.execute(userId)
+            const deletedUser = await deleteUserUseCase.execute(userId)
+
+            // se tentar deletar um ja deletado, o deletedUser vem undefined e retorna a mensagem pro usuario
+            if (!deletedUser) {
+                return userNotFoundResponse()
+            }
 
             return ok(deletedUser)
         } catch (error) {

@@ -2,9 +2,9 @@ import { GetUserByIdUseCase } from '../use-cases/get-user-by-id.js'
 import {
     checkIfIdIsValid,
     invalidIdResponse,
-    notFound,
     ok,
     serverError,
+    userNotFoundResponse,
 } from './helpers/index.js'
 
 export class GetUserByIdController {
@@ -24,7 +24,7 @@ export class GetUserByIdController {
             const user = await getUserByIdUseCase.execute(userId)
             // se não achar nenhum usuário, retorna 404
             if (!user) {
-                return notFound({ message: 'User not found.' })
+                return userNotFoundResponse()
             }
             // retorna status 201 com as informações do usuário de acordo com o ID passado
             return ok(user)

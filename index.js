@@ -3,6 +3,7 @@ import express from 'express'
 import { PostgresHelper } from './src/db/postgres/helper.js'
 import {
     CreateUserController,
+    DeleteUserController,
     GetUserByIdController,
     UpdateUserController,
 } from './src/controllers/index.js'
@@ -45,6 +46,14 @@ app.post('/api/users', async (req, res) => {
     // executo ele com o req, porque é um httpRequest e uso o desestruturo passando o statusCode e body de resposta
     const { statusCode, body } = await createUserController.execute(req)
     // Passo a resposta com o status code e o body.
+    res.status(statusCode).send(body)
+})
+
+app.delete('/api/users/:userId', async (req, res) => {
+    const deleteUserController = new DeleteUserController()
+
+    const { statusCode, body } = await deleteUserController.execute(req)
+
     res.status(statusCode).send(body)
 })
 
