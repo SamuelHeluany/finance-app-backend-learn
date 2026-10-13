@@ -1,14 +1,16 @@
 import { EmailAlreadyInUseError } from '../errors/user.js'
 import { UpdateUserUseCase } from '../use-cases/update-user.js'
-import { badRequest, ok, serverError } from './helpers/http.js'
 import {
     checkIfEmailIsValid,
     checkIfIdIsValid,
-    checkIfPasswordiIsValid,
+    checkIfPasswordIsValid,
     emailIsAlreadyInUseResponse,
     invalidIdResponse,
     invalidPasswordResponse,
-} from './helpers/user.js'
+    badRequest,
+    ok,
+    serverError,
+} from './helpers/index.js'
 
 export class UpdateUserController {
     async execute(httpRequest) {
@@ -45,9 +47,9 @@ export class UpdateUserController {
             }
             // Se existir senha, valida se é maior que 6 caracteres, se não, retorna erro
             if (params.password) {
-                const passwordIsValid = checkIfPasswordiIsValid(params.password)
+                const passwordIsValid = checkIfPasswordIsValid(params.password)
 
-                if (passwordIsValid) {
+                if (!passwordIsValid) {
                     return invalidPasswordResponse()
                 }
             }
