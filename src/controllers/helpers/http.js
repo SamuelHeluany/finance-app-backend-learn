@@ -1,3 +1,5 @@
+// helpers relacionados a http, status code, body...
+
 // Helper são os ajudantes do codigo, principalmente quando há repetição de código
 
 // return pro usuário passando o body

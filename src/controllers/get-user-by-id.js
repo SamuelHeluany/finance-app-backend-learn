@@ -1,23 +1,22 @@
 import { GetUserByIdUseCase } from '../use-cases/get-user-by-id.js'
-import { badRequest, notFound, ok, serverError } from './helpers.js'
-import validator from 'validator'
+import { notFound, ok, serverError } from './helpers/http.js'
+import { checkIfIdIsValid, invalidIdResponse } from './helpers/user.js'
 
 export class GetUserByIdController {
     async execute(httpRequest) {
         try {
+            const userId = httpRequest.params.userId
             // valida o UUID
-            const isIdValid = validator.isUUID(httpRequest.params.userId)
+            const isIdValid = checkIfIdIsValid(userId)
             // Se não for válido, retorna ao usuário o erro
             if (!isIdValid) {
-                return badRequest({ messsage: 'The provided id is not valid.' })
+                invalidIdResponse()
             }
 
             // chama o use case do get user by id
             const getUserByIdUseCase = new GetUserByIdUseCase()
             // executa o usecase passando o ID como parametro: http://localhost:8080/api/users/4034655c-c04a-4287-911c-aac06b53a634
-            const user = await getUserByIdUseCase.execute(
-                httpRequest.params.userId,
-            )
+            const user = await getUserByIdUseCase.execute(userId)
             // se não achar nenhum usuário, retorna 404
             if (!user) {
                 return notFound({ message: 'User not found.' })
