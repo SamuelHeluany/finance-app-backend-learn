@@ -15,6 +15,7 @@ import { PostgresUpdateUserRepository } from './src/repositories/postgres/update
 import { UpdateUserUseCase } from './src/use-cases/update-user.js'
 import { PostgresDeleteUserRepository } from './src/repositories/postgres/delete-user.js'
 import { DeleteUserUseCase } from './src/use-cases/delete-user.js'
+import { PostgresGetUserByEmailRepository } from './src/repositories/postgres/get-user-by-email.js'
 
 const app = express()
 
@@ -59,10 +60,14 @@ app.patch('/api/users/:userId', async (req, res) => {
 
 // create user
 app.post('/api/users', async (req, res) => {
+    const getUserByEmailRepository = new PostgresGetUserByEmailRepository()
     // passa repository normalmente(que não depende de ninguem)
     const createUserRepository = new PostgresCreateUserRepository()
     // passa o use case chamando o repository, pois o usecase depende do repository
-    const createUserUseCase = new CreateUserUseCase(createUserRepository)
+    const createUserUseCase = new CreateUserUseCase(
+        getUserByEmailRepository,
+        createUserRepository,
+    )
     // passa o controller chamando o usecase, pois o controller depende do usecase
     const createUserController = new CreateUserController(createUserUseCase)
     // executo ele com o req, porque é um httpRequest e uso o desestruturação passando o statusCode e body de resposta
