@@ -11,6 +11,8 @@ import { PostgresGetUserByIdRepository } from './src/repositories/postgres/get-u
 import { PostgresCreateUserRepository } from './src/repositories/postgres/create-user.js'
 import { GetUserByIdUseCase } from './src/use-cases/get-user-by-id.js'
 import { CreateUserUseCase } from './src/use-cases/create-user.js'
+import { PostgresUpdateUserRepository } from './src/repositories/postgres/update-user.js'
+import { UpdateUserUseCase } from './src/use-cases/update-user.js'
 
 const app = express()
 
@@ -41,8 +43,11 @@ app.get('/api/users/:userId', async (req, res) => {
 
 // update user by id
 app.patch('/api/users/:userId', async (req, res) => {
-    // passa o controller
-    const updateUserController = new UpdateUserController()
+    const updateUserRepository = new PostgresUpdateUserRepository()
+
+    const updateUserUseCase = new UpdateUserUseCase(updateUserRepository)
+
+    const updateUserController = new UpdateUserController(updateUserUseCase)
 
     // desestrutura o controller e executa passando a request
     const { statusCode, body } = await updateUserController.execute(req)
