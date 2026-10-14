@@ -8,7 +8,9 @@ import {
     UpdateUserController,
 } from './src/controllers/index.js'
 import { PostgresGetUserByIdRepository } from './src/repositories/postgres/get-user-by-id.js'
+import { PostgresCreateUserRepository } from './src/repositories/postgres/create-user.js'
 import { GetUserByIdUseCase } from './src/use-cases/get-user-by-id.js'
+import { CreateUserUseCase } from './src/use-cases/create-user.js'
 
 const app = express()
 
@@ -37,6 +39,7 @@ app.get('/api/users/:userId', async (req, res) => {
     res.status(statusCode).send(body)
 })
 
+// update user by id
 app.patch('/api/users/:userId', async (req, res) => {
     // passa o controller
     const updateUserController = new UpdateUserController()
@@ -48,15 +51,21 @@ app.patch('/api/users/:userId', async (req, res) => {
     res.status(statusCode).send(body)
 })
 
+// create user
 app.post('/api/users', async (req, res) => {
     // pego o controller que valida a requisição (campos obrigatórios, tamanho de senha e email)
-    const createUserController = new CreateUserController()
+    const createUserRepository = new PostgresCreateUserRepository()
+
+    const createUserUseCase = new CreateUserUseCase(createUserRepository)
+
+    const createUserController = new CreateUserController(createUserUseCase)
     // executo ele com o req, porque é um httpRequest e uso o desestruturo passando o statusCode e body de resposta
     const { statusCode, body } = await createUserController.execute(req)
     // Passo a resposta com o status code e o body.
     res.status(statusCode).send(body)
 })
 
+// delete user
 app.delete('/api/users/:userId', async (req, res) => {
     const deleteUserController = new DeleteUserController()
 
