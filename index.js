@@ -45,28 +45,27 @@ app.get('/api/users/:userId', async (req, res) => {
 
 // update user by id
 app.patch('/api/users/:userId', async (req, res) => {
+    // passa repository normalmente(que não depende de ninguem)
     const updateUserRepository = new PostgresUpdateUserRepository()
-
+    // passa o use case chamando o repository, pois o usecase depende do repository
     const updateUserUseCase = new UpdateUserUseCase(updateUserRepository)
-
+    // passa o controller chamando o usecase, pois o controller depende do usecase
     const updateUserController = new UpdateUserController(updateUserUseCase)
-
     // desestrutura o controller e executa passando a request
     const { statusCode, body } = await updateUserController.execute(req)
-
     // envia pro usuario a resposta com statusCode e o body
     res.status(statusCode).send(body)
 })
 
 // create user
 app.post('/api/users', async (req, res) => {
-    // pego o controller que valida a requisição (campos obrigatórios, tamanho de senha e email)
+    // passa repository normalmente(que não depende de ninguem)
     const createUserRepository = new PostgresCreateUserRepository()
-
+    // passa o use case chamando o repository, pois o usecase depende do repository
     const createUserUseCase = new CreateUserUseCase(createUserRepository)
-
+    // passa o controller chamando o usecase, pois o controller depende do usecase
     const createUserController = new CreateUserController(createUserUseCase)
-    // executo ele com o req, porque é um httpRequest e uso o desestruturo passando o statusCode e body de resposta
+    // executo ele com o req, porque é um httpRequest e uso o desestruturação passando o statusCode e body de resposta
     const { statusCode, body } = await createUserController.execute(req)
     // Passo a resposta com o status code e o body.
     res.status(statusCode).send(body)
@@ -74,10 +73,11 @@ app.post('/api/users', async (req, res) => {
 
 // delete user
 app.delete('/api/users/:userId', async (req, res) => {
+    // passa repository normalmente(que não depende de ninguem)
     const deleteUserRepository = new PostgresDeleteUserRepository()
-
+    // passa o use case chamando o repository, pois o usecase depende do repository
     const deleteUserUseCase = new DeleteUserUseCase(deleteUserRepository)
-
+    // passa o controller chamando o usecase, pois o controller depende do usecase
     const deleteUserController = new DeleteUserController(deleteUserUseCase)
 
     const { statusCode, body } = await deleteUserController.execute(req)
