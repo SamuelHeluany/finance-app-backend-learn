@@ -6,3 +6,10 @@ export class EmailAlreadyInUseError extends Error {
         this.name = 'EmailAlreadyInUseError'
     }
 }
+
+export class userNotExistsError extends Error {
+    constructor(userId) {
+        super(`The user id ${userId} not exists.`)
+        this.name = 'UserNotExistsError'
+    }
+}

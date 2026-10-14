@@ -46,10 +46,16 @@ app.get('/api/users/:userId', async (req, res) => {
 
 // update user by id
 app.patch('/api/users/:userId', async (req, res) => {
+    const getUserByIdRepository = new PostgresGetUserByIdRepository()
+    const getUserByEmailRepository = new PostgresGetUserByEmailRepository()
     // passa repository normalmente(que não depende de ninguem)
     const updateUserRepository = new PostgresUpdateUserRepository()
     // passa o use case chamando o repository, pois o usecase depende do repository
-    const updateUserUseCase = new UpdateUserUseCase(updateUserRepository)
+    const updateUserUseCase = new UpdateUserUseCase(
+        getUserByIdRepository,
+        getUserByEmailRepository,
+        updateUserRepository,
+    )
     // passa o controller chamando o usecase, pois o controller depende do usecase
     const updateUserController = new UpdateUserController(updateUserUseCase)
     // desestrutura o controller e executa passando a request

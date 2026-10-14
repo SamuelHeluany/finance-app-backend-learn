@@ -1,4 +1,4 @@
-import { EmailAlreadyInUseError } from '../errors/user.js'
+import { EmailAlreadyInUseError, userNotExistsError } from '../errors/user.js'
 import {
     checkIfEmailIsValid,
     checkIfIdIsValid,
@@ -9,6 +9,7 @@ import {
     badRequest,
     ok,
     serverError,
+    userNotFoundResponse,
 } from './helpers/index.js'
 
 export class UpdateUserController {
@@ -75,6 +76,10 @@ export class UpdateUserController {
             // faz a comparação de que se o erro for uma instancia de EmailAlreadyInUseError, significa que esse erro foi emitido em alguma camada (no caso na use-case) e passa um badRequest com a mensagem do EmailAlreadyInUseError
             if (error instanceof EmailAlreadyInUseError) {
                 return badRequest({ message: error.message })
+            }
+
+            if (error instanceof userNotExistsError) {
+                return userNotFoundResponse()
             }
             return serverError()
         }
