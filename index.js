@@ -7,6 +7,8 @@ import {
     GetUserByIdController,
     UpdateUserController,
 } from './src/controllers/index.js'
+import { PostgresGetUserByIdRepository } from './src/repositories/postgres/get-user-by-id.js'
+import { GetUserByIdUseCase } from './src/use-cases/get-user-by-id.js'
 
 const app = express()
 
@@ -21,8 +23,14 @@ app.get('/', async (req, res) => {
 
 // get dos usuários por id
 app.get('/api/users/:userId', async (req, res) => {
-    // passa o controller
-    const getUserByIdController = new GetUserByIdController()
+    // Agora com a injeção de dependencia feita no userById
+
+    // passa repository normalmente(que não depende de ninguem)
+    const getUserByIdRepository = new PostgresGetUserByIdRepository()
+    // passa o use case chamando o repository, pois o usecase depende do repository
+    const getUserByIdUseCase = new GetUserByIdUseCase(getUserByIdRepository)
+    // passa o controller chamando o usecase, pois o controller depende do usecase
+    const getUserByIdController = new GetUserByIdController(getUserByIdUseCase)
     // desestrutura o controller e executa passando a request
     const { statusCode, body } = await getUserByIdController.execute(req)
     // envia pro usuario a resposta com statusCode e o body
