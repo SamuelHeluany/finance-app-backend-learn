@@ -1,4 +1,3 @@
-import { DeleteUserUseCase } from '../use-cases/delete-user.js'
 import {
     checkIfIdIsValid,
     invalidIdResponse,
@@ -8,6 +7,9 @@ import {
 } from './helpers/index.js'
 
 export class DeleteUserController {
+    constructor(deleteUserUseCase) {
+        this.deleteUserUseCase = deleteUserUseCase
+    }
     async execute(httpRequest) {
         try {
             // aqui é o params da URL
@@ -19,9 +21,7 @@ export class DeleteUserController {
                 return invalidIdResponse()
             }
 
-            const deleteUserUseCase = new DeleteUserUseCase()
-
-            const deletedUser = await deleteUserUseCase.execute(userId)
+            const deletedUser = await this.deleteUserUseCase.execute(userId)
 
             // se tentar deletar um ja deletado, o deletedUser vem undefined e retorna a mensagem pro usuario
             if (!deletedUser) {
