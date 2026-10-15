@@ -4,7 +4,7 @@ import {
     created,
     invalidIdResponse,
     serverError,
-} from '../helpers'
+} from '../helpers/index.js'
 import validator from 'validator'
 
 export class CreateTransactionController {
@@ -16,22 +16,18 @@ export class CreateTransactionController {
             // pega os params do body
             const params = httpRequest.body
             // cria os campos obrigatórios
-            const requiredFields = [
-                'id',
-                'userId',
-                'transaction',
-                'date',
-                'amount',
-                'type',
-            ]
+            const requiredFields = ['user_id', 'name', 'date', 'amount', 'type']
             // faz um loop verificando os campos obrigatorios, se eles foram todos passados
             for (const field of requiredFields) {
-                if (params[field] || params[field].trim().length === 0) {
+                if (
+                    !params[field] ||
+                    params[field].toString().trim().length === 0
+                ) {
                     return badRequest({ message: `Missing params: ${field}` })
                 }
             }
             // verifica se o userid é valido
-            const userIdIsValid = checkIfIdIsValid(params.userId)
+            const userIdIsValid = checkIfIdIsValid(params.user_id)
             // se não for valido, retorna erro
             if (!userIdIsValid) {
                 return invalidIdResponse()
@@ -70,7 +66,7 @@ export class CreateTransactionController {
                 })
             }
             // na criação da transaction, passa tudo que foi passado no body(params) e passa o type que foi criado
-            const transaction = this.createTransactionUseCase.execute({
+            const transaction = await this.createTransactionUseCase.execute({
                 ...params,
                 type,
             })

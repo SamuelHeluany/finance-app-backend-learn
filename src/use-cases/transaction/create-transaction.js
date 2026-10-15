@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid'
-import { userNotExistsError } from '../../errors/user'
+import { userNotExistsError } from '../../errors/user.js'
 
 export class CreateTransactionUseCase {
     constructor(createTransactionRepository, getUserByIdRepository) {
@@ -8,7 +8,7 @@ export class CreateTransactionUseCase {
     }
     async execute(createTransactionParams) {
         // validar se o usuário existe
-        const userId = createTransactionParams.userId
+        const userId = createTransactionParams.user_id
         // pega o usuário do get by user repository
         const user = await this.getUserByIdRepository.execute(userId)
         // se o usuário não existir, lança o erro
@@ -21,6 +21,7 @@ export class CreateTransactionUseCase {
         const transaction = await this.createTransactionRepository.execute({
             ...createTransactionParams,
             id: transactionId,
+            user_id: userId,
         })
         // retorna a transaction criada
         return transaction
