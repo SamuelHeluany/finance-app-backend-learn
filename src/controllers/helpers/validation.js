@@ -9,6 +9,10 @@ export const invalidIdResponse = () => {
         message: 'The provided ID is not valid.',
     })
 }
+// Retorna uma bad request se tiver um campo que não foi passado ou está em branco
+export const requiredFieldIsMissingResponse = (missingField) =>
+    badRequest({ message: `Missing params: ${missingField}` })
+
 // faz uma validação se o campo é uma string, pois o trim() não pode ser usado caso o campo for um number...
 export const checkIfIsString = (value) => typeof value === 'string'
 
