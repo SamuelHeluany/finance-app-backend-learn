@@ -7,6 +7,7 @@ import {
     badRequest,
     created,
     serverError,
+    validateRequiredFields,
 } from '../helpers/index.js'
 
 export class CreateUserController {
@@ -24,14 +25,16 @@ export class CreateUserController {
                 'email',
                 'password',
             ]
-
-            // Cria um loop para cada campo obrigatório, ele valida se o campo ta presente no body
-            for (const field of requiredFields) {
-                // se não tiver um params field (campo false) ou tiver ele vazio
-                if (!params[field] || params[field].trim().length === 0) {
-                    return badRequest({ message: `Missing param: ${field}` })
-                }
+            // faz uma validação dos campos, passando o validate(body e requiredFields)
+            const { ok: allFieldsAreProvide, missingField } =
+                validateRequiredFields(params, requiredFields)
+            // Verifica se se é false o OK do validation, se for false, reotrna erro
+            if (!allFieldsAreProvide) {
+                return badRequest({
+                    message: `Missing params: ${missingField}`,
+                })
             }
+
             // Valida se a senha tem pelomenos 6 caracteres
             const passwordIsValid = checkIfPasswordIsValid(params.password)
             if (!passwordIsValid) {

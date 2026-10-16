@@ -4,6 +4,7 @@ import {
     created,
     invalidIdResponse,
     serverError,
+    validateRequiredFields,
 } from '../helpers/index.js'
 import validator from 'validator'
 
@@ -17,14 +18,16 @@ export class CreateTransactionController {
             const params = httpRequest.body
             // cria os campos obrigatórios
             const requiredFields = ['user_id', 'name', 'date', 'amount', 'type']
-            // faz um loop verificando os campos obrigatorios, se eles foram todos passados
-            for (const field of requiredFields) {
-                if (
-                    !params[field] ||
-                    params[field].toString().trim().length === 0
-                ) {
-                    return badRequest({ message: `Missing params: ${field}` })
-                }
+
+            // faz uma validação dos campos, passando o validate(body e requiredFields)
+            const { ok: allFieldsAreProvide, missingField } =
+                validateRequiredFields(params, requiredFields)
+
+            // Verifica se se é false o OK do validation, se for false, retorna erro
+            if (!allFieldsAreProvide) {
+                return badRequest({
+                    message: `Missing params: ${missingField}`,
+                })
             }
             // verifica se o userid é valido
             const userIdIsValid = checkIfIdIsValid(params.user_id)
