@@ -1,5 +1,4 @@
 import {
-    badRequest,
     checkIfIdIsValid,
     created,
     invalidIdResponse,
@@ -7,7 +6,12 @@ import {
     serverError,
     validateRequiredFields,
 } from '../helpers/index.js'
-import validator from 'validator'
+import {
+    checkIfAmountIsValid,
+    checkIfTypeIsValid,
+    invalidAmountResponse,
+    invalidTypeResponse,
+} from '../helpers/transaction.js'
 
 export class CreateTransactionController {
     constructor(createTransactionUseCase) {
@@ -35,31 +39,19 @@ export class CreateTransactionController {
                 return invalidIdResponse()
             }
             // usa o validator para validar o formato do valor passado transformando em uma string: se tem 2 decimais, não permite valor negativos e o separador de decimal é o ponto
-            const amountIsValid = validator.isCurrency(
-                params.amount.toString(),
-                {
-                    digits_after_decimal: [2],
-                    allow_negatives: false,
-                    decimal_separator: '.',
-                },
-            )
+            const amountIsValid = checkIfAmountIsValid(params.amount)
             // Se a validação do amount for false, retorna erro
             if (!amountIsValid) {
-                return badRequest({
-                    message: 'The amount must be a valid currency.',
-                })
+                return invalidAmountResponse()
             }
             // tira o espaçamento do type passado e deixa maiusculo
             const type = params.type.trim().toUpperCase()
             // Verifica se o type é algum dos informados,
-            const typeIsValid = ['EARNING', 'EXPENSE', 'INVESTIMENT'].includes(
-                type,
-            )
+            const typeIsValid = checkIfTypeIsValid(type)
+
             // se for false, retorna erro
             if (!typeIsValid) {
-                return badRequest({
-                    message: 'The type must be EARNING, EXPENSE, INVESTIMENT',
-                })
+                return invalidTypeResponse()
             }
             // na criação da transaction, passa tudo que foi passado no body(params) e passa o type que foi criado
             const transaction = await this.createTransactionUseCase.execute({
