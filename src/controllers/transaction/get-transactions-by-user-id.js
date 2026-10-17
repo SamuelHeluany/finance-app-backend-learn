@@ -5,8 +5,8 @@ import {
     requiredFieldIsMissingResponse,
     serverError,
     userNotFoundResponse,
-} from '../helpers.js'
-import { ok } from '../helpers/http.js'
+    ok,
+} from '../helpers/index.js'
 
 export class GetTransactionsByUserIdController {
     constructor(getTransactionsByUserIdUseCase) {

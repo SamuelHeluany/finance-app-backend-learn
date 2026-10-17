@@ -1,4 +1,4 @@
-import { PostgresHelper } from '../../../db/postgres/helper'
+import { PostgresHelper } from '../../../db/postgres/helper.js'
 // pega por userId da transaction usando query params
 export class PostgresGetTransactionByUserId {
     async execute(userId) {
@@ -6,6 +6,6 @@ export class PostgresGetTransactionByUserId {
             'SELECT * FROM transactions WHERE user_id = $1',
             [userId],
         )
-        return transactions[0]
+        return transactions
     }
 }
