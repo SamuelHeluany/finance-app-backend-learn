@@ -8,7 +8,7 @@ import {
     invalidTypeResponse,
     serverError,
     ok,
-} from '../helpers.js'
+} from '../helpers/index.js'
 
 export class UpdateTransactionController {
     constructor(updateTransactionUseCase) {
