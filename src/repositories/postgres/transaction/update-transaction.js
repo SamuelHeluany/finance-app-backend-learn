@@ -7,7 +7,7 @@ export class PostgresUpdateTransactionRepository {
 
         Object.keys(updateTransactionParams).forEach((key) => {
             updateFields.push(`${key} = $${updateValues.length + 1}`)
-            updateFields.push(updateTransactionParams[key])
+            updateValues.push(updateTransactionParams[key])
         })
 
         updateValues.push(transactionId)
