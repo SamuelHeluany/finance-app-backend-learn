@@ -16,6 +16,9 @@ export class PostgresGetUserBalanceRepository {
             FROM transactions WHERE user_id = $1`,
             [userId],
         )
-        return balance[0]
+        return {
+            userId,
+            ...balance[0],
+        }
     }
 }
