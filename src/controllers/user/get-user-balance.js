@@ -1,11 +1,11 @@
-import { userNotExistsError } from '../../errors/user'
+import { userNotExistsError } from '../../errors/user.js'
 import {
     checkIfIdIsValid,
     invalidIdResponse,
     ok,
     serverError,
     userNotFoundResponse,
-} from '../helpers'
+} from '../helpers/index.js'
 
 export class GetUserBalanceController {
     constructor(getUserBalanceUseCase) {
