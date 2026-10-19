@@ -2,11 +2,12 @@ import { PostgresHelper } from '../../../db/postgres/helper.js'
 
 export class PostgresGetUserBalanceRepository {
     async execute(userId) {
+        // Balanço do usuário, onde pega o ganho, gasto e investimento e depois faz o calculo de GANHO - GASTO - INVESTIMENTO
         const balance = await PostgresHelper.query(
             `SELECT
-            SUM(CASE WHEN type = 'EARNING' THEN amount ELSE 0 END) AS earnings
-            SUM(CASE WHEN type = 'EXPENSE' THEN amount ELSE 0 END) AS expenses
-            SUM(CASE WHEN type = 'INVESTIMENT' THEN amount ELSE 0 END) AS investiment
+            SUM(CASE WHEN type = 'EARNING' THEN amount ELSE 0 END) AS earnings,
+            SUM(CASE WHEN type = 'EXPENSE' THEN amount ELSE 0 END) AS expenses,
+            SUM(CASE WHEN type = 'INVESTIMENT' THEN amount ELSE 0 END) AS investiment,
                 (
                 SUM(CASE WHEN type = 'EARNING' THEN amount ELSE 0 END)
                 - SUM(CASE WHEN type = 'EXPENSE' THEN amount ELSE 0 END)
