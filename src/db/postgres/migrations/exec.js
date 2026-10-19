@@ -12,13 +12,20 @@ const execMigrations = async () => {
     // conecta a pool
     const client = await pool.connect()
     try {
-        // acha o arquivo sql
-        const filePath = path.join(__dirname, '01-init.sql')
-        // executa o arquivo sql
-        const script = fs.readFileSync(filePath, 'utf-8')
-        // executa a query
-        await client.query(script)
-        console.log('Migrations executed successfully!')
+        // da um filter em todos os arquivos que terminam em .sql
+        const files = fs
+            .readdirSync(__dirname)
+            .filter((file) => file.endsWith('.sql'))
+
+        for (const file of files) {
+            // acha o arquivo sql
+            const filePath = path.join(__dirname, file)
+            // executa o arquivo sql
+            const script = fs.readFileSync(filePath, 'utf-8')
+            // executa a query
+            await client.query(script)
+            console.log('Migrations executed successfully!')
+        }
     } catch (error) {
         console.error(error)
     } finally {
