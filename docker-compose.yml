@@ -1,0 +1,13 @@
+# Declara o service
+services:
+    postgres: # No caso service postgres
+        image: postgres:latest #Versao do postgres
+        container_name: finance-app-postgres-compose # nome do container
+        environment: # configurações de ambiente
+            POSTGRES_PASSWORD: samuel10
+            POSTGRES_USER: shk
+            POSTGRES_DB: financeapp
+        ports: # porta, seta a nossa porta para a porta do postgres
+            - '5432:5432'
+        volumes:
+            - ./.postgres-data:/var/lib/postgresql
