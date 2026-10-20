@@ -1,14 +1,12 @@
+import { ZodError } from 'zod'
 import {
     EmailAlreadyInUseError,
     userNotExistsError,
 } from '../../errors/user.js'
+import { updateUserSchema } from '../../schemas/user.js'
 import {
-    checkIfEmailIsValid,
     checkIfIdIsValid,
-    checkIfPasswordIsValid,
-    emailIsAlreadyInUseResponse,
     invalidIdResponse,
-    invalidPasswordResponse,
     badRequest,
     ok,
     serverError,
@@ -32,43 +30,9 @@ export class UpdateUserController {
             // controller recebe o body
             const params = httpRequest.body
 
-            // aqui listamos os campos permitidos
-            const allowedFields = [
-                'first_name',
-                'last_name',
-                'email',
-                'password',
-            ]
+            // passa o schema do zod pelos parametros recebidos
+            await updateUserSchema.parseAsync(params)
 
-            // Verificar se alguma propriedade recebida(field), não está nessa lista pois recebe um true
-            const someFieldIsNotAllowed = Object.keys(params).some(
-                (field) => !allowedFields.includes(field),
-            )
-
-            // se for true, retorna erro
-            if (someFieldIsNotAllowed) {
-                return badRequest({
-                    message: 'Some provided field is not allowed.',
-                })
-            }
-            // Se existir senha, valida se é maior que 6 caracteres, se não, retorna erro
-            if (params.password) {
-                const passwordIsValid = checkIfPasswordIsValid(params.password)
-
-                if (!passwordIsValid) {
-                    return invalidPasswordResponse()
-                }
-            }
-
-            // se existir email, verifica se ele tem formato válido, se não, retorna erro
-            if (params.email) {
-                const emailsIsValid = checkIfEmailIsValid(params.email)
-
-                if (!emailsIsValid) {
-                    return emailIsAlreadyInUseResponse()
-                }
-            }
-            //
             const updateUser = await this.updateUserUseCase.execute(
                 userId,
                 params,
@@ -76,6 +40,12 @@ export class UpdateUserController {
 
             return ok(updateUser)
         } catch (error) {
+            // Se o error for uma instancia do zoderror, retorna bad request
+            if (error instanceof ZodError) {
+                return badRequest({
+                    message: error.issues[0].message,
+                })
+            }
             // faz a comparação de que se o erro for uma instancia de EmailAlreadyInUseError, significa que esse erro foi emitido em alguma camada (no caso na use-case) e passa um badRequest com a mensagem do EmailAlreadyInUseError
             if (error instanceof EmailAlreadyInUseError) {
                 return badRequest({ message: error.message })

@@ -16,3 +16,9 @@ export const createUserSchema = z.object({
         message: 'Password must have at least 6 characters.',
     }),
 })
+// passa o update com partial do create, ou seja, transforma tudo do create em opcional. Se passar uma propriedade, ele aciona o zod do create
+// Passa o update com um strickObject, passando o createUserSchema com os campos não obrigatórios e o shape, caso o retorno do shape for algum campo invalido, ele retorna a mensagem de erro
+export const updateUserSchema = z.strictObject(
+    createUserSchema.partial().shape,
+    'Some provided field is not allowed.',
+)
