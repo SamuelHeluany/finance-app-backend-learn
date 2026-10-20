@@ -21,7 +21,6 @@ export class CreateTransactionUseCase {
         const transaction = await this.createTransactionRepository.execute({
             ...createTransactionParams,
             id: transactionId,
-            user_id: userId,
         })
         // retorna a transaction criada
         return transaction
