@@ -13,5 +13,22 @@ model Users {
   first_name String @db.VarChar(50) //first_name como string e limite de 50 caracteres
   last_name String @db.VarChar(50) // last_name como string e limite de 50 caracteres
   email String @db.VarChar(100) @unique // email como string, limite de 100 caracteres e @unique para informar que não pode ter outro email igual
-  passsword String @db.VarChar(100)
+  passsword String @db.VarChar(100) // password como string e limite de 100 caracteres
+  transactions Transactions[] // Precisa especificar que o usuário tem várias transactions, passando uma lista da tabela Transactions
+}
+
+model Transactions {
+  id String @id @default(uuid()) // id como string @id indicando ser chave primária e gerando UUID
+  user_id String // esse user_id é o que vai ser salvo no banco e não o user abaixo, o user abaixo é só pra a relação com o id do usuário
+  user Users @relation(fields: [user_id], references: [id]) // Aqui diz: o user da tabelas Users, ele tem relação com o campo user_id de Users pelo seu ID
+  name String @db.VarChar(50) //name como string e limite de 50 caracteres
+  date DateTime @db.Date // date como DateTime e já que não recebe a hora na data, passa do @db.Date
+  amount Decimal @db.Decimal(10,2) // amount como decimal, passando as casas depois da virgula e antes
+  type TransactionType // cria o enum e informa que o type é um ENUM
+}
+// enum das transactions type
+enum TransactionType {
+  EARNING
+  EXPENSE
+  INVESTIMENT
 }
