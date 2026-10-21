@@ -13,7 +13,7 @@ model Users {
   first_name String @db.VarChar(50) //first_name como string e limite de 50 caracteres
   last_name String @db.VarChar(50) // last_name como string e limite de 50 caracteres
   email String @db.VarChar(100) @unique // email como string, limite de 100 caracteres e @unique para informar que não pode ter outro email igual
-  passsword String @db.VarChar(100) // password como string e limite de 100 caracteres
+  password String @db.VarChar(100) // password como string e limite de 100 caracteres
   transactions Transactions[] // Precisa especificar que o usuário tem várias transactions, passando uma lista da tabela Transactions
 }
 
