@@ -2,14 +2,19 @@ import { ZodError } from 'zod'
 import { EmailAlreadyInUseError } from '../../errors/user.js'
 import { badRequest, created, serverError } from '../helpers/index.js'
 import { createUserSchema } from '../../schemas/index.js'
+import { CreateUserProps } from '../../use-cases/index.js'
+import { Users } from '../../generated/prisma/index.js'
+import { HttpRequest, HttpResponse } from '../types.js'
+
+export interface CreateUserUserCaseProps {
+    execute(params: CreateUserProps): Promise<Users>
+}
 
 export class CreateUserController {
-    constructor(createUserUseCase) {
-        this.createUserUseCase = createUserUseCase
-    }
-    async execute(httpRequest) {
+    constructor(private readonly createUserUseCase: CreateUserUserCaseProps) {}
+    async execute(httpRequest: HttpRequest): Promise<HttpResponse> {
         try {
-            const params = httpRequest.body
+            const params = httpRequest.body as CreateUserProps
             // verifica o que foi passado no body pelo zod, de for asyncrona
             await createUserSchema.parseAsync(params)
             // passa os params para o usecase
@@ -21,7 +26,7 @@ export class CreateUserController {
             // Se for um erro do zod, ele trar um 404 com a mensagem de erro do proprio zod
             if (error instanceof ZodError) {
                 return badRequest({
-                    message: error.issues[0].message,
+                    message: error.issues[0]?.message ?? 'Invalid request.',
                 })
             }
             // faz a comparação de que se o erro for uma instancia de EmailAlreadyInUseError, significa que esse erro foi emitido em alguma camada (no caso na use-case) e passa um badRequest com a mensagem do EmailAlreadyInUseError
