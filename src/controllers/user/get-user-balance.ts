@@ -1,4 +1,6 @@
 import { userNotExistsError } from '../../errors/user.js'
+import type { UserBalance } from '../../repositories/postgres/index.js'
+import type { GetUserBalanceParams } from '../../use-cases/index.js'
 import {
     checkIfIdIsValid,
     invalidIdResponse,
@@ -6,18 +8,22 @@ import {
     serverError,
     userNotFoundResponse,
 } from '../helpers/index.js'
+import type { HttpRequest, HttpResponse } from '../types.js'
+
+interface GetUserBalanceUseCaseProps {
+    execute(params: GetUserBalanceParams): Promise<UserBalance>
+}
 
 export class GetUserBalanceController {
-    constructor(getUserBalanceUseCase) {
-        this.getUserBalanceUseCase = getUserBalanceUseCase
-    }
-    async execute(httpRequest) {
+    constructor(
+        private readonly getUserBalanceUseCase: GetUserBalanceUseCaseProps,
+    ) {}
+    async execute(httpRequest: HttpRequest): Promise<HttpResponse> {
         try {
-            const userId = httpRequest.params.userId
+            const userId = httpRequest.params?.userId
 
-            const idIsValid = checkIfIdIsValid(userId)
-
-            if (!idIsValid) {
+            // valida o ID com o validator
+            if (!userId || !checkIfIdIsValid(userId)) {
                 return invalidIdResponse()
             }
 
