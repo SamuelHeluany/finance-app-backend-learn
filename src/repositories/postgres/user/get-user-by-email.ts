@@ -1,5 +1,5 @@
 import { prisma } from '../../../../prisma/prisma.js'
-import { Users } from '../../../generated/prisma/index.js'
+import type { Users } from '../../../generated/prisma/index.js'
 
 export class PostgresGetUserByEmailRepository {
     async execute(email: string): Promise<Users | null> {

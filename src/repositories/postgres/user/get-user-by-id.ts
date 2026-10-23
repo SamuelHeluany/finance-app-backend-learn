@@ -1,5 +1,5 @@
 import { prisma } from '../../../../prisma/prisma.js'
-import { Users } from '../../../generated/prisma/index.js'
+import type { Users } from '../../../generated/prisma/index.js'
 
 export class PostgresGetUserByIdRepository {
     // chama o helper para fazer o select por id dos usuários passando o userId
