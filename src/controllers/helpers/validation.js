@@ -4,11 +4,11 @@ import { badRequest } from './http.js'
 
 export const checkIfIdIsValid = (userId) => validator.isUUID(userId)
 
-export const invalidIdResponse = () => {
-    return badRequest({
+export const invalidIdResponse = () =>
+    badRequest({
         message: 'The provided ID is not valid.',
     })
-}
+
 // Retorna uma bad request se tiver um campo que não foi passado ou está em branco
 export const requiredFieldIsMissingResponse = (missingField) =>
     badRequest({ message: `Missing params: ${missingField}` })

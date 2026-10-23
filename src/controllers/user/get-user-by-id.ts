@@ -1,3 +1,4 @@
+import { Users } from '../../generated/prisma/index.js'
 import {
     checkIfIdIsValid,
     invalidIdResponse,
@@ -5,20 +6,21 @@ import {
     serverError,
     userNotFoundResponse,
 } from '../helpers/index.js'
+import { HttpRequest, HttpResponse } from '../types.js'
+
+interface GetUserByIdUseCaseProps {
+    execute(userId: string): Promise<Users | null>
+}
 
 export class GetUserByIdController {
     // passa o use case para o controller por injeção de dependencia
-    constructor(getUserByIdUseCase) {
-        this.getUserByIdUseCase = getUserByIdUseCase
-    }
-    async execute(httpRequest) {
+    constructor(private readonly getUserByIdUseCase: GetUserByIdUseCaseProps) {}
+    async execute(httpRequest: HttpRequest): Promise<HttpResponse> {
         try {
-            const userId = httpRequest.params.userId
+            const userId = httpRequest.params?.userId
             // valida o UUID
-            const isIdValid = checkIfIdIsValid(userId)
-            // Se não for válido, retorna ao usuário o erro
-            if (!isIdValid) {
-                invalidIdResponse()
+            if (!userId || !checkIfIdIsValid(userId)) {
+                return invalidIdResponse()
             }
 
             // passa o use case do constructor e executa o usecase passando o ID como parametro: http://localhost:8080/api/users/4034655c-c04a-4287-911c-aac06b53a634
