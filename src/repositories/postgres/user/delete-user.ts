@@ -1,7 +1,8 @@
 import { prisma } from '../../../../prisma/prisma.js'
+import type { Users } from '../../../generated/prisma/index.js'
 
 export class PostgresDeleteUserRepository {
-    async execute(userId) {
+    async execute(userId: string): Promise<Users | null> {
         try {
             return await prisma.users.delete({
                 where: {

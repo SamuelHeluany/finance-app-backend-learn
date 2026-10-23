@@ -1,3 +1,4 @@
+import type { Users } from '../../generated/prisma/index.js'
 import {
     checkIfIdIsValid,
     invalidIdResponse,
@@ -5,19 +6,20 @@ import {
     serverError,
     userNotFoundResponse,
 } from '../helpers/index.js'
+import { HttpRequest, HttpResponse } from '../types.js'
+
+export interface DeleteUserUseCaseProps {
+    execute(userId: string): Promise<Users | null>
+}
 
 export class DeleteUserController {
-    constructor(deleteUserUseCase) {
-        this.deleteUserUseCase = deleteUserUseCase
-    }
-    async execute(httpRequest) {
+    constructor(private readonly deleteUserUseCase: DeleteUserUseCaseProps) {}
+    async execute(httpRequest: HttpRequest): Promise<HttpResponse> {
         try {
             // aqui é o params da URL
-            const userId = httpRequest.params.userId
+            const userId = httpRequest.params?.userId
 
-            const idIsValid = checkIfIdIsValid(userId)
-
-            if (!idIsValid) {
+            if (!userId || !checkIfIdIsValid(userId)) {
                 return invalidIdResponse()
             }
 
