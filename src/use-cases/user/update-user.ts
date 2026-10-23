@@ -3,18 +3,37 @@ import {
     userNotExistsError,
 } from '../../errors/user.js'
 import bcrypt from 'bcrypt'
+import type { Users } from '../../generated/prisma/index.js'
+
+export interface UpdateUserParams {
+    first_name?: string
+    last_name?: string
+    email?: string
+    password?: string
+}
+
+interface GetUserByEmailRepositoryProps {
+    execute(email: string): Promise<Users | null>
+}
+
+interface GetUserByIdRepositoryProps {
+    execute(userId: string): Promise<Users | null>
+}
+
+interface UpdateUserRepositoryProps {
+    execute(userId: string, updateParams: UpdateUserParams): Promise<Users>
+}
 
 export class UpdateUserUseCase {
     constructor(
-        getUserByIdRepository,
-        getUserByEmailRepository,
-        updateUserRepository,
-    ) {
-        this.getUserByIdRepository = getUserByIdRepository
-        this.getUserByEmailRepository = getUserByEmailRepository
-        this.updateUserRepository = updateUserRepository
-    }
-    async execute(userId, updateUserParams) {
+        private readonly getUserByIdRepository: GetUserByIdRepositoryProps,
+        private readonly getUserByEmailRepository: GetUserByEmailRepositoryProps,
+        private readonly updateUserRepository: UpdateUserRepositoryProps,
+    ) {}
+    async execute(
+        userId: string,
+        updateUserParams: UpdateUserParams,
+    ): Promise<Users> {
         const userExists = await this.getUserByIdRepository.execute(userId)
 
         if (!userExists) {
