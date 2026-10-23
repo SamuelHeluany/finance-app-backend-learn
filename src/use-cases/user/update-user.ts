@@ -21,7 +21,10 @@ interface GetUserByIdRepositoryProps {
 }
 
 interface UpdateUserRepositoryProps {
-    execute(userId: string, updateParams: UpdateUserParams): Promise<Users>
+    execute(params: {
+        userId: string
+        updateUserParams: UpdateUserParams
+    }): Promise<Users>
 }
 
 export class UpdateUserUseCase {
@@ -69,10 +72,10 @@ export class UpdateUserUseCase {
         }
 
         // executa o repository para dar o update no user, passando o id e o user que são as informações alteradas e as não-alteradas(as que ja estavam)
-        const updatedUser = await this.updateUserRepository.execute(
+        const updatedUser = await this.updateUserRepository.execute({
             userId,
-            user,
-        )
+            updateUserParams: user,
+        })
 
         // retorna o usuário atualizado
         return updatedUser
