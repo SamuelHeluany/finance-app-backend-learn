@@ -1,3 +1,4 @@
+import { Transactions } from '../../generated/prisma/index.js'
 import {
     checkIfIdIsValid,
     invalidIdResponse,
@@ -5,19 +6,22 @@ import {
     serverError,
     transactionNotFoundResponse,
 } from '../helpers/index.js'
+import { HttpRequest, HttpResponse } from '../types.js'
+
+interface DeleteTransactionUseCase {
+    execute(transactionId: string): Promise<Transactions | null>
+}
 
 export class DeleteTransactionController {
-    constructor(deleteTransactionUseCase) {
-        this.deleteTransactionUseCase = deleteTransactionUseCase
-    }
+    constructor(
+        private readonly deleteTransactionUseCase: DeleteTransactionUseCase,
+    ) {}
 
-    async execute(httpRequest) {
+    async execute(httpRequest: HttpRequest): Promise<HttpResponse> {
         try {
-            const transactionId = httpRequest.params.transactionId
+            const transactionId = httpRequest.params?.transactionId
 
-            const transactionIdIsValid = checkIfIdIsValid(transactionId)
-
-            if (!transactionIdIsValid) {
+            if (!transactionId || !checkIfIdIsValid(transactionId)) {
                 return invalidIdResponse()
             }
 
