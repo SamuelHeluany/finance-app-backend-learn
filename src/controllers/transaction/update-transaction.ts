@@ -1,3 +1,5 @@
+import { Transactions } from '../../generated/prisma/index.js'
+import { UpdateTransactionParams } from '../../use-cases/index.js'
 import {
     badRequest,
     checkIfAmountIsValid,
@@ -9,19 +11,25 @@ import {
     serverError,
     ok,
 } from '../helpers/index.js'
+import { HttpRequest, HttpResponse } from '../types.js'
+
+interface UpdateTransactionUseCaseProps {
+    execute(
+        transactionId: string,
+        params: UpdateTransactionParams,
+    ): Promise<Transactions>
+}
 
 export class UpdateTransactionController {
-    constructor(updateTransactionUseCase) {
-        this.updateTransactionUseCase = updateTransactionUseCase
-    }
-    async execute(httpRequest) {
+    constructor(
+        private readonly updateTransactionUseCase: UpdateTransactionUseCaseProps,
+    ) {}
+    async execute(httpRequest: HttpRequest): Promise<HttpResponse> {
         try {
-            const params = httpRequest.body
-            const transactionId = httpRequest.params.transactionId
+            const params = httpRequest.body as UpdateTransactionParams
+            const transactionId = httpRequest.params?.transactionId
 
-            const idIsValid = checkIfIdIsValid(transactionId)
-
-            if (!idIsValid) {
+            if (!transactionId || !checkIfIdIsValid(transactionId)) {
                 return invalidIdResponse()
             }
 
