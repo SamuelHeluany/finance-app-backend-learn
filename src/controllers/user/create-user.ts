@@ -6,12 +6,12 @@ import { CreateUserProps } from '../../use-cases/index.js'
 import { Users } from '../../generated/prisma/index.js'
 import { HttpRequest, HttpResponse } from '../types.js'
 
-export interface CreateUserUserCaseProps {
+export interface CreateUserUseCaseProps {
     execute(params: CreateUserProps): Promise<Users>
 }
 
 export class CreateUserController {
-    constructor(private readonly createUserUseCase: CreateUserUserCaseProps) {}
+    constructor(private readonly createUserUseCase: CreateUserUseCaseProps) {}
     async execute(httpRequest: HttpRequest): Promise<HttpResponse> {
         try {
             const params = httpRequest.body as CreateUserProps
